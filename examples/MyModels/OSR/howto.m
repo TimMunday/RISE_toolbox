@@ -50,8 +50,9 @@ set(tmp,'fontsize',15)
 
 %% Read the model(s)
 
-model_names={'volatilityOnly','policyOnly','volatilityPolicySame',...
-    'volatilityPolicyIndependent'};
+model_names = {'persistencePolicySame'};
+% model_names={'volatilityOnly','policyOnly','volatilityPolicySame',...
+%     'volatilityPolicyIndependent'};
 nmodels=numel(model_names);
 estim_models=cell(1,nmodels);
 
@@ -75,7 +76,7 @@ for imod=1:nmodels
 end
 
 %% We estimate the models or filter them directly
-close all,clc
+%close all clc
 % if we have the parallel computing toolbox, we can estimate all models in
 % one go
 filtration=cell(1,nmodels); % used to be curly brackets here
@@ -87,30 +88,12 @@ for imod=1:nmodels
     [estim_models{imod},filtration{imod}]=estimate(estim_models{imod},'optimizer','fmincon');
 end
 
-%% plot the smoothed probabilities
-% we plot the low response (coef_2) and the high volatility (vol_2) regimes
-mystates={'coef_2','vol_2'};
-mylabels={'low monetary policy response regime','High volatility regime'};
-for imod=1:nmodels
-    mytitle=['smoothed probabilities for ',model_names{imod},' model'];
-    thisstates=mystates;
-    thislabels=mylabels;
-    discard=false(1,numel(thisstates));
-    for ii=1:numel(thisstates)
-        discard(ii)=~ismember(thisstates{ii},estim_models{imod}.markov_chains.state_names);
-    end
-    thisstates=thisstates(~discard);
-    thislabels=thislabels(~discard);
-    nstates=numel(thisstates);
-    figure('name',mytitle)
-    for istate=1:nstates
-        subplot(nstates,1,istate)
-        plot(filtration{imod}.smoothed_state_probabilities.(thisstates{istate}),...
-            'linewidth',2)
-        title([thislabels{istate},'(chain ',thisstates{istate}(1:end-2),' state ',thisstates{istate}(end),')'])
-    end
-    [junk,tmp]=sup_label(mytitle,'t');
-    set(tmp,'fontsize',15)
-    orient tall    
-end
+
+%%
+regime_2_probs = filtration{1}.smoothed_regime_probabilities.regime_2.data;
+plot(regime_2_probs)
+%% My export cell
+% export probs of regime 
+writematrix(regime_2_probs, 'C:\Users\tmund\Documents\LearningTaylor\Data\HF\regime_2_probs_pers.csv');
+
 

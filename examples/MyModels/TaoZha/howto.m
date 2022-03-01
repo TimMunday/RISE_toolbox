@@ -50,8 +50,9 @@ set(tmp,'fontsize',15)
 
 %% Read the model(s)
 
-model_names={'volatilityOnly','policyOnly','volatilityPolicySame',...
-    'volatilityPolicyIndependent'};
+model_names = {'policyOnly', 'volatilityPolicySame'};
+% model_names={'volatilityOnly','policyOnly','volatilityPolicySame',...
+%     'volatilityPolicyIndependent'};
 nmodels=numel(model_names);
 estim_models=cell(1,nmodels);
 
@@ -75,7 +76,7 @@ for imod=1:nmodels
 end
 
 %% We estimate the models or filter them directly
-close all,clc
+%close all clc
 % if we have the parallel computing toolbox, we can estimate all models in
 % one go
 filtration=cell(1,nmodels); % used to be curly brackets here
@@ -114,3 +115,10 @@ for imod=1:nmodels
     orient tall    
 end
 
+%% My export cell
+% export probs of vol 2 regime 
+regime_2_probs_policy = filtration{1}.smoothed_regime_probabilities.regime_2.data;
+writematrix(regime_2_probs_policy, 'C:\Users\tmund\Documents\LearningTaylor\Data\HF\regime_2_probs_policy.csv');
+
+regime_2_probs_policyvol = filtration{2}.smoothed_regime_probabilities.regime_2.data;
+writematrix(regime_2_probs_policyvol, 'C:\Users\tmund\Documents\LearningTaylor\Data\HF\regime_2_probs_policyvol.csv');

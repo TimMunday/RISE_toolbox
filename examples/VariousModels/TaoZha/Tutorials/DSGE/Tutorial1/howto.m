@@ -95,6 +95,7 @@ for ireg=1:2
                 legend(labels(:,2))
             end
         end
+
         [~,tmp]=sup_label([shock,' shock, ',regime],'t');
         set(tmp,'fontsize',15)
     end
@@ -119,10 +120,10 @@ for ivar=1:numel(newlist)
     v=newlist{ivar};
     % plot it
     plot(simdata.(v),'linewidth',2)
-    title(v,'interp','none')
-    if ivar==1
-        legend(labels(:,2))
-    end
+    %title(v,'interp','none')
+    %if ivar==1
+    %    legend(labels(:,2))
+    %end
 end
 [junk,tmp]=sup_label('Simulated data for all models ','t');
 set(tmp,'fontsize',15)
