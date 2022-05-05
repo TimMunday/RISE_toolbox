@@ -13,12 +13,12 @@ clc
 %% add the paths to RISE, the data and the models
 setpaths=true;
 if setpaths
-    addpath C:\Users\tmund\Documents\LearningTaylor\Code\RISE\FOMC\RISE_toolbox\examples\MyModels\TaoZha\Models % folder with the models
-    addpath C:\Users\tmund\Documents\LearningTaylor\Code\RISE\FOMC\RISE_toolbox\examples\MyModels\TaoZha\Data % folder containing the data
+    addpath C:\Users\tmund\Documents\LearningTaylor\Code\RISE\FOMC\RISE_toolbox\examples\MyModels\Linde\Models\ % folder with the models
+    addpath C:\Users\tmund\Documents\LearningTaylor\Code\RISE\FOMC\RISE_toolbox\examples\MyModels\Linde\Data\ % folder containing the data
 end
 %% Bring in some data and transform them into RISE's time series format (ts)
 
-tmp=load('Data/savetest2.mat');  %qdatae
+tmp=load('Data/savetest2.mat');  %qdatae data_nk3eq_8501_1301.mat
 dataList={
     'X','output gap  y_t (log GDP_t - log GDPPotential_t)'
     'PAI','PCE core inflation pi_t (log P_t - log P_{t-1})'
@@ -30,7 +30,7 @@ for id=1:size(dataList,1)
     % we just give the start date, RISE automatically understand that we
     % are dealing with quarterly data by the format startdate
     mydata.(dataList{id,1})=ts(startdate,... start date
-        tmp.A(:,id+1),... the data
+        tmp.A(:,id+1),... the data %.qdatae
         dataList{id,2});
 end
 
@@ -50,7 +50,7 @@ set(tmp,'fontsize',15)
 
 %% Read the model(s)
 
-model_names = {'volatilityPolicySame'};
+model_names = {'persistencePolicySame_long'};
 % model_names={'volatilityOnly','policyOnly','volatilityPolicySame',...
 %     'volatilityPolicyIndependent'};
 nmodels=numel(model_names);
@@ -59,7 +59,8 @@ estim_models=cell(1,nmodels);
 % rather than putting all the models in the same vector as we did earlier,
 % we put them in a cell array. If we put them in the same vector and call
 % the estimation function, RISE will think that we want to estimate a
-% pareto-type of model. But this is not what we want to do and is probably
+% pareto-type of model. But this is not what we want to 
+%do and is probably
 % beyond the scope of these lectures.
 
 % we loop through the different models using the information in the labels
@@ -75,11 +76,6 @@ for imod=1:nmodels
     % of the individual files (without the comments)
 end
 
-% to make data in mat file from csv
-% table = readtable(something.csv)
-% then A = table2array(table)
-% then save('savetest.mat', 'A')
-
 %% We estimate the models or filter them directly
 %close all clc
 % if we have the parallel computing toolbox, we can estimate all models in
@@ -90,51 +86,15 @@ for imod=1:nmodels
     disp('*--------------------------------------------------------------*')
     disp(['*---------Estimation of ',model_names{imod},' model-----------*'])
     disp('*--------------------------------------------------------------*')
-    [estim_models{imod},filtration{imod}]=estimate(estim_models{imod},'optimizer','fmincon');
+    [estim_models{imod},filtration{imod}]=estimate(estim_models{imod},'optimizer','fmincon'); %fmincon usually
 end
 
-%% plot the smoothed probabilities
-% we plot the low response (coef_2) and the high volatility (vol_2) regimes
-mystates={'coef_2','vol_2'};
-mylabels={'low monetary policy response regime','High volatility regime'};
-for imod=1:nmodels
-    mytitle=['smoothed probabilities for ',model_names{imod},' model'];
-    thisstates=mystates;
-    thislabels=mylabels;
-    discard=false(1,numel(thisstates));
-    for ii=1:numel(thisstates)
-        discard(ii)=~ismember(thisstates{ii},estim_models{imod}.markov_chains.state_names);
-    end
-    thisstates=thisstates(~discard);
-    thislabels=thislabels(~discard);
-    nstates=numel(thisstates);
-    figure('name',mytitle)
-    for istate=1:nstates
-        subplot(nstates,1,istate)
-        plot(filtration{imod}.smoothed_state_probabilities.(thisstates{istate}),...
-            'linewidth',2)
-        title([thislabels{istate},'(chain ',thisstates{istate}(1:end-2),' state ',thisstates{istate}(end),')'])
-    end
-    [junk,tmp]=sup_label(mytitle,'t');
-    set(tmp,'fontsize',15)
-    orient tall    
-end
 
+%%
+regime_2_probs = filtration{1}.smoothed_regime_probabilities.regime_2.data;
+plot(regime_2_probs)
 %% My export cell
-% export probs of vol 2 regime 
-regime_2_probs_policy = filtration{1}.smoothed_regime_probabilities.regime_2.data;
-writematrix(regime_2_probs_policy, 'C:\Users\tmund\Documents\LearningTaylor\Data\HF\regime_2_probs_policy.csv');
+% export probs of regime 
+writematrix(regime_2_probs, 'C:\Users\tmund\Documents\LearningTaylor\Data\HF\regime_2_probs_pers_linde_long.csv');
 
-% export irfs of inlfation and interest rate shocks to 
-simple_irfs = irf(estim_models{1},'irf_periods',20);
 
-writematrix(simple_irfs.ED.R.data,'C:\Users\tmund\Documents\LearningTaylor\Data\HF\irfsEDR.csv');
-writematrix(simple_irfs.ED.PAI.data,'C:\Users\tmund\Documents\LearningTaylor\Data\HF\irfsEDPAI.csv');
-writematrix(simple_irfs.ED.X.data,'C:\Users\tmund\Documents\LearningTaylor\Data\HF\irfsEDX.csv');
-
-writematrix(simple_irfs.ES.R.data,'C:\Users\tmund\Documents\LearningTaylor\Data\HF\irfsESR.csv');
-writematrix(simple_irfs.ES.PAI.data,'C:\Users\tmund\Documents\LearningTaylor\Data\HF\irfsESPAI.csv');
-writematrix(simple_irfs.ES.X.data,'C:\Users\tmund\Documents\LearningTaylor\Data\HF\irfsESX.csv');
-
-%regime_2_probs_policyvol = filtration{2}.smoothed_regime_probabilities.regime_2.data;
-%writematrix(regime_2_probs_policyvol, 'C:\Users\tmund\Documents\LearningTaylor\Data\HF\regime_2_probs_policyvol.csv');

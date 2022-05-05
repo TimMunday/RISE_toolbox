@@ -14,11 +14,16 @@ clc
 setpaths=true;
 if setpaths
     addpath C:\Users\tmund\Documents\LearningTaylor\Code\RISE\FOMC\RISE_toolbox\examples\MyModels\Linde\Models\ % folder with the models
-    addpath C:\Users\tmund\Documents\LearningTaylor\Code\RISE\FOMC\RISE_toolbox\examples\MyModels\Linde\Data % folder containing the data
+    addpath C:\Users\tmund\Documents\LearningTaylor\Code\RISE\FOMC\RISE_toolbox\examples\MyModels\Linde\Data\ % folder containing the data
 end
+
+% to make data in mat file from csv
+% table = readtable(something.csv)
+% then A = table2array(table)
+% then save('savetest.mat', 'A')
 %% Bring in some data and transform them into RISE's time series format (ts)
 
-tmp=load('Data/data_nk3eq_8501_1301');  %qdatae
+tmp=load('Data/2019mat.mat');  %qdatae data_nk3eq_8501_1301.mat
 dataList={
     'X','output gap  y_t (log GDP_t - log GDPPotential_t)'
     'PAI','PCE core inflation pi_t (log P_t - log P_{t-1})'
@@ -30,7 +35,7 @@ for id=1:size(dataList,1)
     % we just give the start date, RISE automatically understand that we
     % are dealing with quarterly data by the format startdate
     mydata.(dataList{id,1})=ts(startdate,... start date
-        tmp.qdatae(:,id+1)*100,... the data
+        tmp.A(:,id+1)*100,... the data %.qdatae
         dataList{id,2});
 end
 
@@ -59,7 +64,8 @@ estim_models=cell(1,nmodels);
 % rather than putting all the models in the same vector as we did earlier,
 % we put them in a cell array. If we put them in the same vector and call
 % the estimation function, RISE will think that we want to estimate a
-% pareto-type of model. But this is not what we want to do and is probably
+% pareto-type of model. But this is not what we want to 
+%do and is probably
 % beyond the scope of these lectures.
 
 % we loop through the different models using the information in the labels
@@ -85,7 +91,7 @@ for imod=1:nmodels
     disp('*--------------------------------------------------------------*')
     disp(['*---------Estimation of ',model_names{imod},' model-----------*'])
     disp('*--------------------------------------------------------------*')
-    [estim_models{imod},filtration{imod}]=estimate(estim_models{imod},'optimizer','fmincon');
+    [estim_models{imod},filtration{imod}]=estimate(estim_models{imod},'optimizer','fmincon'); %fmincon usually
 end
 
 

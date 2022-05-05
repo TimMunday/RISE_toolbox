@@ -50,8 +50,9 @@ set(tmp,'fontsize',15)
 
 %% Read the model(s)
 
-model_names={'volatilityOnly','policyOnly','volatilityPolicySame',...
-    'volatilityPolicyIndependent'};
+%model_names={'volatilityOnly','policyOnly','volatilityPolicySame',...
+%    'volatilityPolicyIndependent'};
+model_names={'volatilityPolicySame'}
 nmodels=numel(model_names);
 estim_models=cell(1,nmodels);
 

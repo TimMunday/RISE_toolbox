@@ -56,9 +56,9 @@ end
 [~,tmp]=sup_label(['US data ',mydata.(varlist{id}).start,':', mydata.(varlist{id}).finish],'t');
 set(tmp,'fontsize',15)
 %% Read the model(s)
-
-model_names={'svar_constant','svar_policy','svar_volatility',...
-    'svar_policy_volatility'};
+model_names = {'svar_policy'};
+%model_names={'svar_constant','svar_policy','svar_volatility',...
+%    'svar_policy_volatility'};
 nmodels=numel(model_names);
 estim_models=cell(1,nmodels);
 

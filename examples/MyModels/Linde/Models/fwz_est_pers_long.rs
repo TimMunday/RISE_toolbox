@@ -37,14 +37,14 @@ model
 
 % the non-policy and non-persistence parameters never switch, they will be controlled by the const markov chain
 parameterization
-	betaf_trans          ,    0.1; %,     0.1000,    0.5000,  beta_pdf(.90); % calib beta value is 0.999 for beta_trans = 0.1 , sensible?
-	gamma1        ,    0.2,    0.005,    0.100,  gamma_pdf(.90); % no reason for this one? works if calib to 0.2 ish, also works if starting value 0.2
-   sigd         ,    0.9   ,    0.05,    1.,  weibull_pdf(.90); %guess
-   sigs         ,    0.5 ,    0.05,    1.,  weibull_pdf(.90); %guess
-   sigr         ,    0.5   ,    0.05,    1.,  weibull_pdf(.90); %guess
-   betar        ,    0.2,    0.005,     0.5,     gamma_pdf(.90); % starting value from SW is 0.0048
-   betay        ,    1.100,     1.1,        1.2,     normal_pdf(.90); % starting value from SW
-   rho1         ,    0.95; %,        0.4,        1.5,    gamma_pdf(.90); % calib from SW
-   rho2         ,    -0.06;%,        0.0,        0.3,     normal_pdf(.90); % calib from SW
+	betaf_trans          ,    0.17;%,     0.1000,    0.5000,  beta_pdf(.90); % calib beta value is 0.999 for beta_trans = 0.1 , sensible? % calib from one
+	gamma1        ,    0.0027;%,    0.005,    0.400,  gamma_pdf(.90); % no reason for this one? works if calib to 0.2 ish, also works if starting value 0.2 % calib from one
+   sigd         ,    0.05   ,    0.05,    1.,  weibull_pdf(.90); %guess
+   sigs         ,    0.05 ,    0.05,    1.,  weibull_pdf(.90); %guess
+   sigr         ,    0.05   ,    0.05,    1.,  weibull_pdf(.90); %guess
+   betar        ,    0.0048; %    0.0005,     0.1,     gamma_pdf(.90); % starting value from SW
+   betay        ,    1.100; %     1.0,        1.2,     normal_pdf(.90); % starting value from SW and one
+   rho1         ,    0.0; %        0.4,        1.5,    gamma_pdf(.90); % calib by me
+   rho2         ,    0.0; %       0.0,        0.3,     normal_pdf(.90); % calib by me
 
 
